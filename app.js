@@ -6,7 +6,15 @@ const { PORT = 3001 } = process.env;
 const app = express();
 
 
-mongoose.connect("mongodb://127.0.0.1:27017/wtwr_db");
+mongoose.connect('mongodb://127.0.0.1:27017/wtwr_db');
+
+app.use((req, res, next) => {
+  req.user = {
+    _id: '689ce20396898f328cd4f56a'// paste the _id of the test user created in the previous step
+  };
+  next();
+});
+
 
 app.use(express.json());
 app.use("/", mainRouter);
@@ -18,4 +26,5 @@ app.listen(PORT, () => {
 app.get('/', (req, res) => {
   res.send('working still?');
 });
+
 

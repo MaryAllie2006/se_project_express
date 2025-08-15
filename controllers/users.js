@@ -1,11 +1,11 @@
-const user = require("../models/user");
+const User = require("../models/user");
 
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send(users))
     .catch((err) => {
       console.error(err);
-      return res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: "Requested resource not found" });
     });
 };
 
@@ -16,9 +16,9 @@ const createUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(500).send({ message: err.message });
+        return res.status(500).send({ message: "Requested resource not found"});
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: "Requested resource not found" });
     });
 };
 
@@ -31,7 +31,7 @@ const getUser = (req, res) => {
       if (err.name === "") {
         //return res.status(500).send({ message: err.message });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: "Requested resource not found" });
     });
 };
 
