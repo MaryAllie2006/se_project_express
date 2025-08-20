@@ -1,30 +1,37 @@
-module.exports.createClothingItems = (req, res, next) => {
-  console.log(req.user._id);
+module.exports.createClothingItems = (req, res) => {
+  const { name, weather, imageUrl } = req.body;
+  const owner = req.user._id;
 
-  const newItem = {
-    name: req.body.name,
-    weather: req.body.weather,
-    imageUrl: req.body.imageUrl,
-    owner: req.user._id,
-  };
+  ClothingItem.create({ name, weather, imageUrl, owner })
+    .then((item) => res.send(item))
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        return res.status(400).send({ message: "Invalid data" });
+      }
+      return res
+        .status(500)
+        .send({ message: "An error has occurred on the server" });
+    });
 };
 
-const ClothingItem = require('../models/clothingItem');
-const { ERROR_CODE_404, ERROR_CODE_500 } = require('../utils/errors');
+const ClothingItem = require("../models/clothingItem");
+const { ERROR_CODE_404, ERROR_CODE_500 } = require("../utils/errors");
 
 module.exports.likeItem = (req, res) => {
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
-    { $addToSet: { likes: req.user._id } }, 
+    { $addToSet: { likes: req.user._id } },
     { new: true }
   )
     .orFail()
     .then((item) => res.send(item))
     .catch((err) => {
-      if (err.name === 'DocumentNotFoundError') {
-        return res.status(ERROR_CODE_404).send({ message: 'Item not found' });
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(ERROR_CODE_404).send({ message: "Item not found" });
+      } else if (err.name === "CastError") {
+        return res.status(400).send({ message: "Invalid ID format" });
       }
-      return res.status(ERROR_CODE_500).send({ message: 'An error has occurred on the server' });
+      return res.status(ERROR_CODE_500).send({ message: "An error has occurred on the server" });
     });
 };
 
@@ -37,9 +44,13 @@ module.exports.dislikeItem = (req, res) => {
     .orFail()
     .then((item) => res.send(item))
     .catch((err) => {
-      if (err.name === 'DocumentNotFoundError') {
-        return res.status(ERROR_CODE_404).send({ message: 'Item not found' });
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(ERROR_CODE_404).send({ message: "Item not found" });
       }
-      return res.status(ERROR_CODE_500).send({ message: 'An error has occurred on the server' });
+      return res
+        .status(ERROR_CODE_500)
+        .send({ message: "An error has occurred on the server" });
     });
 };
+
+module.exports = router; 

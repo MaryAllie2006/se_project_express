@@ -1,13 +1,7 @@
 const User = require("../models/user");
 
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.send(users))
-    .catch((err) => {
-      console.error(err);
-      return res.status(500).send({ message: "Requested resource not found" });
-    });
-};
+
+
 
 const createUser = (req, res) => {
   const { name, avatar } = req.body;
@@ -16,9 +10,9 @@ const createUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(500).send({ message: "Requested resource not found"});
+        return res.status(ERROR_CODE_400).send({ message: "Invalid data" });
       }
-      return res.status(500).send({ message: "Requested resource not found" });
+      return res.status(ERROR_CODE_500).send({ message: "Requested resource not found" });
     });
 };
 
@@ -29,10 +23,10 @@ const getUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "") {
-        //return res.status(500).send({ message: err.message });
+      return res.status(ERROR_CODE_400).send({ message: "Invalid ID format" });
       }
-      return res.status(500).send({ message: "Requested resource not found" });
+      return res.status(ERROR_CODE_500).send({ message: "Requested resource not found" });
     });
 };
 
-module.exports = { getUsers, createUser, getUser };
+module.exports = { getUser, createUser };
