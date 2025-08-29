@@ -20,7 +20,7 @@ app.use(express.json());
 app.use("/", mainRouter);
 
 app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`);
+  console.error(`App listening on port ${PORT}`);
 });
 
 app.get('/', (req, res) => {
