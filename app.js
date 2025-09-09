@@ -23,8 +23,6 @@ app.listen(PORT, () => {
   console.error(`App listening on port ${PORT}`);
 });
 
-app.get('/', (req, res) => {
-  res.send('working still?');
-});
+
 
 

@@ -1,5 +1,5 @@
 const ClothingItem = require("../models/clothingItem");
-const { ERROR_CODE_404, ERROR_CODE_500 } = require("../utils/errors");
+const { ERROR_CODE_404, ERROR_CODE_500, ERROR_CODE_400 } = require("../utils/errors");
 
 module.exports.createClothingItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
@@ -9,10 +9,10 @@ module.exports.createClothingItem = (req, res) => {
     .then((item) => res.send(item))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        return res.status(400).send({ message: "Invalid data" });
+        return res.status(ERROR_CODE_400).send({ message: "Invalid data" });
       }
       return res
-        .status(500)
+        .status(ERROR_CODE_500)
         .send({ message: "An error has occurred on the server" });
     });
 };
@@ -30,7 +30,7 @@ module.exports.likeItem = (req, res) => {
         return res.status(ERROR_CODE_404).send({ message: "Item not found" });
       }
       if (err.name === "CastError") {
-        return res.status(400).send({ message: "Invalid ID format" });
+        return res.status(ERROR_CODE_400).send({ message: "Invalid ID format" });
       }
       return res
         .status(ERROR_CODE_500)
@@ -71,7 +71,7 @@ module.exports.deleteClothingItem = (req, res) => {
         return res.status(ERROR_CODE_404).send({ message: "Item not found" });
       }
       if (err.name === "CastError") {
-        return res.status(400).send({ message: "Invalid ID format" });
+        return res.status(ERROR_CODE_400).send({ message: "Invalid ID format" });
       }
       return res.status(ERROR_CODE_500).send({ message: "An error has occurred on the server" });
     });

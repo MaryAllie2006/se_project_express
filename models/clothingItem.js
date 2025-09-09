@@ -14,8 +14,15 @@ const clothingItemSchema = new mongoose.Schema({
   },
   imageUrl: {
     type: String,
-    required: true
+    required: true,
+    validator:{
+      validator: function(v){
+        return validator.isURL(value); 
+      },
+      message: "You must enter a valid URL",
+    }
   },
+
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
