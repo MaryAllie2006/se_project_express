@@ -5,7 +5,7 @@ const {
   createClothingItem,
   getClothingItems,
   deleteClothingItem
-} = require('../controllers/clothingitems');
+} = require('../controllers/clothingItems');
 
 const router = express.Router();
 

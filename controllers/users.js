@@ -1,5 +1,5 @@
 const User = require("../models/user");
-
+const {ERROR_CODE_400, ERROR_CODE_404, ERROR_CODE_500} = require("../utils/errors");
 
 const createUser = (req, res) => {
   const { name, avatar } = req.body;
@@ -10,6 +10,14 @@ const createUser = (req, res) => {
       if (err.name === "ValidationError") {
         return res.status(ERROR_CODE_400).send({ message: "Invalid data" });
       }
+      return res.status(ERROR_CODE_500).send({ message: "Requested resource not found" });
+    });
+};
+const getUsers = (req, res) => {
+  User.find({})
+    .then((users) => res.send(users))
+    .catch((err) => {
+      console.error(err);
       return res.status(ERROR_CODE_500).send({ message: "Requested resource not found" });
     });
 };
@@ -30,4 +38,4 @@ const getUser = (req, res) => {
     });
 };
 
-module.exports = { getUser, createUser };
+module.exports = { getUser, createUser, getUsers };
