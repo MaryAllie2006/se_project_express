@@ -1,9 +1,9 @@
 const ClothingItem = require("../models/clothingItem");
 const { ERROR_CODE_404, ERROR_CODE_500, ERROR_CODE_400 } = require("../utils/errors");
 
- const createClothingItem = (req, res) => {
-  const { name, weather, imageUrl } = req.body;
-  const owner = req.user._id;
+const createClothingItem = (req, res) => {
+const { name, weather, imageUrl } = req.body;
+const owner = req.user._id;
 
   ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => res.send(item))
@@ -68,7 +68,13 @@ const getClothingItems = (req, res) => {
  const deleteClothingItem = (req, res) => {
   ClothingItem.findByIdAndDelete(req.params.itemId)
     .orFail()
-    .then((item) => res.send(item))
+    .then((item) => {
+      if (!item.owner.equals(req.user._id)) {
+        return res.status(403).send({ message: "You do not have permission to delete this item." });
+      }
+      return ClothingItem.findByIdAndDelete(req.params.itemId)
+        .then((deletedItem) => res.send(deletedItem));
+    })
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
         return res.status(ERROR_CODE_404).send({ message: "Item not found" });
