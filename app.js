@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const mainRouter = require("./routes/index");
+
 const cors = require("cors");
 const clothingItemsRouter = require('./routes/clothingItems');
 const userRouter = require('./routes/users');
@@ -23,8 +23,10 @@ app.get('/items', getClothingItems);
 
 app.use(auth);
 
+app.use('/users', userRouter);
+app.use('/items', clothingItemsRouter);
 
-app.use("/", mainRouter);
+
 
 app.listen(PORT, () => {
   console.error(`App listening on port ${PORT}`);

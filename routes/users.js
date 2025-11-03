@@ -4,7 +4,7 @@ const {getCurrentUser,updateCurrentUser, createUser, getUsers, login } = require
 router.get('/me', getCurrentUser);
 router.patch('/me', updateCurrentUser);
 router.get('/', getUsers);
-router.get('/', createUser);
-router.get('/signin', login); 
+router.post('/', createUser);
+router.post('/signin', login);
 
 module.exports = router;
