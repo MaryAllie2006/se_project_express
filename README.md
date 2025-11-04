@@ -33,5 +33,5 @@ Before committing your code, make sure you edit the file `sprint.txt` in the roo
 
  ## Project Pitch Video
  
- Check out [this video](ADD_LINK_HERE), where I describe my 
+ Check out [this video](https://www.loom.com/share/f1f0b66d01bb41b2afae493b9c72d78b), where I describe my 
  project and some challenges I faced while building it.
