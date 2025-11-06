@@ -3,13 +3,11 @@ const {
   likeItem,
   dislikeItem,
   createClothingItem,
-  getClothingItems,
   deleteClothingItem
 } = require('../controllers/clothingItems');
 
 const router = express.Router();
 
-router.get('/', getClothingItems);
 router.post('/', createClothingItem);
 router.delete('/:itemId', deleteClothingItem);
 

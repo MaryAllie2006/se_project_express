@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     required: true,
-    validator:{
+    validate:{
       validator(value){
         return validator.isURL(value);
       },
@@ -22,7 +22,13 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    validate:{
+      validator(value){
+        return validator.isEmail(value);
+      },
+      message: "You must enter a valid URL",
+    }
   },
   password: {
     type: String,

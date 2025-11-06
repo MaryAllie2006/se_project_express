@@ -2,8 +2,6 @@ const express = require("express");
 const mongoose = require("mongoose");
 
 const cors = require("cors");
-const clothingItemsRouter = require('./routes/clothingItems');
-const userRouter = require('./routes/users');
 
 const { PORT = 3001 } = process.env;
 const app = express();
@@ -22,11 +20,6 @@ app.post('/signup', createUser);
 app.get('/items', getClothingItems);
 
 app.use(auth);
-
-app.use('/users', userRouter);
-app.use('/items', clothingItemsRouter);
-
-
 
 app.listen(PORT, () => {
   console.error(`App listening on port ${PORT}`);
