@@ -20,6 +20,7 @@ app.post('/signup', createUser);
 app.get('/items', getClothingItems);
 
 app.use(auth);
+app.use("/", mainRouter);
 
 app.listen(PORT, () => {
   console.error(`App listening on port ${PORT}`);

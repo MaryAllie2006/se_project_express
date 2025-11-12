@@ -1,5 +1,5 @@
 const ClothingItem = require("../models/clothingItem");
-const { ERROR_CODE_404, ERROR_CODE_500, ERROR_CODE_400 } = require("../utils/errors");
+const { ERROR_CODE_404, ERROR_CODE_403, ERROR_CODE_500, ERROR_CODE_400 } = require("../utils/errors");
 
 const createClothingItem = (req, res) => {
 const { name, weather, imageUrl } = req.body;
@@ -70,7 +70,7 @@ const getClothingItems = (req, res) => {
     .orFail()
     .then((item) => {
       if (!item.owner.equals(req.user._id)) {
-        return res.status(403);
+        return res.status(ERROR_CODE_403);
       }
       return ClothingItem.findByIdAndDelete(req.params.itemId)
         .then((deletedItem) => res.send(deletedItem));

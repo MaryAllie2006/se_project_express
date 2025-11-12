@@ -6,6 +6,8 @@ const clothingItemsRouter = require("./clothingItems");
 
 router.use("/users", userRouter);
 router.use("/items", clothingItemsRouter);
+router.post('/', createUser);
+router.post('/signin', login);
 
 
 router.use((req, res) => {

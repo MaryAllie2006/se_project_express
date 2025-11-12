@@ -29,14 +29,6 @@ const createUser = (req, res) => {
 
 };
 
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.send(users))
-    .catch((err) => {
-      console.error(err);
-      return res.status(ERROR_CODE_500).send({ message: "Requested resource not found" });
-    });
-};
 
 const getCurrentUser = (req, res) => {
   const userId = req.user._id;
@@ -103,4 +95,4 @@ const login = (req, res) => {
       return res.status(ERROR_CODE_500).send({ message: "An error has occurred on the server" });
     });
   }
-module.exports = { getCurrentUser, updateCurrentUser, createUser, getUsers, login};
+module.exports = { getCurrentUser, updateCurrentUser, createUser, login};
