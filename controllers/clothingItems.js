@@ -70,7 +70,7 @@ const getClothingItems = (req, res) => {
     .orFail()
     .then((item) => {
       if (!item.owner.equals(req.user._id)) {
-        return res.status(ERROR_CODE_403);
+        return res.status(ERROR_CODE_403).send({ message: "Forbidden action" });
       }
       return ClothingItem.findByIdAndDelete(req.params.itemId)
         .then((deletedItem) => res.send(deletedItem));

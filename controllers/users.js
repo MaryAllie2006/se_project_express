@@ -12,7 +12,7 @@ const createUser = (req, res) => {
     .then((user) => {
       const userObj = user.toObject();
       delete userObj.password;
-      res.status(201).send(userObj);
+      res.status(200).send(userObj);
     })
   .catch((err) => {
     console.error(err);
