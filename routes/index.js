@@ -12,4 +12,4 @@ router.use((req, res) => {
   res.status(ERROR_CODE_404).send({ message: "Requested resource not found" });
 });
 
-module.exports = router;
+module.exports = router; 
