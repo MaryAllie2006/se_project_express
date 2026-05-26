@@ -1,7 +1,7 @@
 const ClothingItem = require("../models/clothingItem");
 const { ERROR_CODE_404, ERROR_CODE_403, ERROR_CODE_500, ERROR_CODE_400 } = require("../utils/errors");
 
-const createClothingItem = (req, res) => {
+const createClothingItem = (req, res, next) => {
 const { name, weather, imageUrl } = req.body;
 const owner = req.user._id;
 
@@ -9,15 +9,15 @@ const owner = req.user._id;
     .then((item) => res.send(item))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        return res.status(ERROR_CODE_400).send({ message: "Invalid data" });
+        const error = new Error("Invalid data");
+        error.statusCode = ERROR_CODE_400;
+        return next(error);
       }
-      return res
-        .status(ERROR_CODE_500)
-        .send({ message: "An error has occurred on the server" });
+      next(err);
     });
 };
 
-const likeItem = (req, res) => {
+const likeItem = (req, res, next) => {
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
     { $addToSet: { likes: req.user._id } },
@@ -27,18 +27,20 @@ const likeItem = (req, res) => {
     .then((item) => res.send(item))
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        return res.status(ERROR_CODE_404).send({ message: "Item not found" });
+        const error = new Error("Item not found");
+        error.statusCode = ERROR_CODE_404;
+        return next(error);
       }
       if (err.name === "CastError") {
-        return res.status(ERROR_CODE_400).send({ message: "Invalid ID format" });
+        const error = new Error("Invalid ID format");
+        error.statusCode = ERROR_CODE_400;
+        return next(error);
       }
-      return res
-        .status(ERROR_CODE_500)
-        .send({ message: "An error has occurred on the server" });
+      next(err);
     });
 };
 
-const dislikeItem = (req, res) => {
+const dislikeItem = (req, res, next) => {
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
     { $pull: { likes: req.user._id } },
@@ -48,41 +50,49 @@ const dislikeItem = (req, res) => {
     .then((item) => res.send(item))
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        return res.status(ERROR_CODE_404).send({ message: "Item not found" });
+        const error = new Error("Item not found");
+        error.statusCode = ERROR_CODE_404;
+        return next(error);
       }
       if (err.name === "CastError") {
-        return res.status(ERROR_CODE_400).send({ message: "Invalid ID format" });
+        const error = new Error("Invalid ID format");
+        error.statusCode = ERROR_CODE_400;
+        return next(error);
       }
-      return res
-        .status(ERROR_CODE_500)
-        .send({ message: "An error has occurred on the server" });
+      next(err);
     });
 };
 
-const getClothingItems = (req, res) => {
+const getClothingItems = (req, res, next) => {
   ClothingItem.find({})
     .then((items) => res.send(items))
-    .catch(() => res.status(ERROR_CODE_500).send({ message: "An error has occurred on the server" }));
+    .catch((err) => next(err));
 };
 
- const deleteClothingItem = (req, res) => {
+ const deleteClothingItem = (req, res, next) => {
   ClothingItem.findById(req.params.itemId)
     .orFail()
     .then((item) => {
       if (!item.owner.equals(req.user._id)) {
-        return res.status(ERROR_CODE_403).send({ message: "Forbidden action" });
+        const error = new Error("Forbidden action");
+        error.statusCode = ERROR_CODE_403;
+        return next(error);
       }
       return ClothingItem.findByIdAndDelete(req.params.itemId)
         .then((deletedItem) => res.send(deletedItem));
     })
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        return res.status(ERROR_CODE_404).send({ message: "Item not found" });
+        const error = new Error("Item not found");
+        error.statusCode = ERROR_CODE_404;
+        return next(error);
       }
       if (err.name === "CastError") {
-        return res.status(ERROR_CODE_400).send({ message: "Invalid ID format" });
+        const error = new Error("Invalid ID format");
+        error.statusCode = ERROR_CODE_400;
+        return next(error);
       }
-      return res.status(ERROR_CODE_500).send({ message: "An error has occurred on the server" });
+      next(err);
     });
 };
 

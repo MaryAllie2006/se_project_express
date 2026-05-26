@@ -4,7 +4,7 @@ const User = require("../models/user");
 const {ERROR_CODE_400,ERROR_CODE_401, ERROR_CODE_404, ERROR_CODE_500, ERROR_CODE_409} = require("../utils/errors");
 const {JWT_SECRET} = require('../utils/config');
 
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
 
   return bcrypt.hash(password, 10)
@@ -15,44 +15,50 @@ const createUser = (req, res) => {
       res.status(200).send(userObj);
     })
   .catch((err) => {
-    console.error(err);
     if(err.code === 11000) {
-      return res.status(ERROR_CODE_409).send({ message: "This email address is already registered." });
+      const error = new Error("This email address is already registered.");
+      error.statusCode = ERROR_CODE_409;
+      return next(error);
       }
 
       if (err.name === "ValidationError") {
-        return res.status(ERROR_CODE_400).send({ message: "Invalid data" });
+        const error = new Error("Invalid data");
+        error.statusCode = ERROR_CODE_400;
+        return next(error);
       }
 
-      return res.status(ERROR_CODE_500).send({ message: "An error has occurred on the server." });
+      next(err);
     });
 
 };
 
 
-const getCurrentUser = (req, res) => {
+const getCurrentUser = (req, res, next) => {
   const userId = req.user._id;
   User.findById(userId)
     .then((user) => res.status(201).send(user))
     .catch((err) => {
-      console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(ERROR_CODE_404).send({ message: "User not found" });
+        const error = new Error("User not found");
+        error.statusCode = ERROR_CODE_404;
+        return next(error);
       }
       if (err.name === "CastError") {
-        return res.status(ERROR_CODE_400).send({ message: "Invalid ID format" });
+        const error = new Error("Invalid ID format");
+        error.statusCode = ERROR_CODE_400;
+        return next(error);
       }
-      return res.status(ERROR_CODE_500).send({ message: "Requested resource not found" });
+      next(err);
     });
 };
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const {email, password} = req.body;
 
   if(!email || !password) {
-    return res.status(ERROR_CODE_400).send({
-      message: "Email and password are required"
-    });
+    const error = new Error("Email and password are required");
+    error.statusCode = ERROR_CODE_400;
+    return next(error);
   }
 
   return User.findUserByCredentials(email, password)
@@ -62,18 +68,15 @@ const login = (req, res) => {
     })
     .catch((err) => {
       if (err.message === "Incorrect email or password") {
-        return res.status(ERROR_CODE_401).send({
-          message: "Incorrect email or password."
-        });
+        const error = new Error("Incorrect email or password.");
+        error.statusCode = ERROR_CODE_401;
+        return next(error);
       }
-      return res.status(ERROR_CODE_404).send({
-        message: "An error has occured on the server."
-      })
-
+      next(err);
     });
   };
 
-  const updateCurrentUser = (req, res) => {
+  const updateCurrentUser = (req, res, next) => {
     const { name, avatar } = req.body;
    return User.findByIdAndUpdate(
     req.user._id,
@@ -84,15 +87,34 @@ const login = (req, res) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        return res.status(ERROR_CODE_404).send({ message: "User not found" });
+        const error = new Error("User not found");
+        error.statusCode = ERROR_CODE_404;
+        return next(error);
       }
       if (err.name === "ValidationError") {
-        return res.status(ERROR_CODE_400).send({ message: "Invalid data" });
+        const error = new Error("Invalid data");
+        error.statusCode = ERROR_CODE_400;
+        return next(error);
       }
       if (err.name === "CastError") {
-        return res.status(ERROR_CODE_400).send({ message: "Invalid ID format" });
+        const error = new Error("Invalid ID format");
+        error.statusCode = ERROR_CODE_400;
+        return next(error);
       }
-      return res.status(ERROR_CODE_500).send({ message: "An error has occurred on the server" });
+      next(err);
     });
   }
 module.exports = { getCurrentUser, updateCurrentUser, createUser, login};
+
+const getUser = (req, res, next) => {
+  User.findById(req.params.id)
+    .orFail(() => {
+      const error = new Error('User ID not found');
+      error.statusCode = 404;
+      throw error;
+    })
+    .then((user) => res.send(user))
+    .catch((err) => {
+      next(err);
+    });
+};
