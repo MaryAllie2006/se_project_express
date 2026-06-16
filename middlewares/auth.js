@@ -2,6 +2,10 @@ const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../utils/config');
 const { ERROR_CODE_401} = require('../utils/errors');
 
+const baseUrl = process.env.NODE_ENV === "production"
+  ? "https://api.moontest.chickenkiller.com"
+  : "http://localhost:3001";
+
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
 

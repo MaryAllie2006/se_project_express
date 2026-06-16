@@ -18,11 +18,12 @@
   "bugs": {
     "url": "https://github.com/MaryAllie2006/se_project_express/issues"
   },
-  "homepage": "https://github.com/MaryAllie2006/se_project_express#readme",
+  "homepage": "https://moontest.chickenkiller.com",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "celebrate": "^15.0.3",
     "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
     "express": "^4.21.2",
     "express-winston": "^4.2.0",
     "jsonwebtoken": "^9.0.2",

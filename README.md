@@ -31,7 +31,11 @@ This project is the backend server for the WTWR (What to Wear?) application. It 
 
 Before committing your code, make sure you edit the file `sprint.txt` in the root folder. The file `sprint.txt` should contain the number of the sprint you're currently working on. For ex. 12
 
- ## Project Pitch Video
+ ## Project Pitch Videos
  
  Check out [this video](https://www.loom.com/share/f1f0b66d01bb41b2afae493b9c72d78b), where I describe my 
  project and some challenges I faced while building it.
+
+ ## Project Pitch Video (most recent)
+
+ Check out [this video](https://drive.google.com/file/d/1HXQDUYhdJ9KyED3DTcn5r67tBZFfKGJ1/view?usp=sharing), where I share the latest updates on my project and difficulties I encountered. 
