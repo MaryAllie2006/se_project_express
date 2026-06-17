@@ -2,6 +2,10 @@
 
 This project is the backend server for the WTWR (What to Wear?) application. It provides a RESTful API for managing users and clothing items, including user registration, retrieving user information, creating and managing clothing items, and implementing a like/unlike system for items. The backend is built with Node.js, Express, and MongoDB, and is designed to support secure, scalable, and maintainable web applications.
 
+## Frontend Repository 
+
+  [https://github.com/MaryAllie2006/se_project_react.git]
+
 ## Functionality
 
 - User registration and retrieval
