@@ -12,6 +12,7 @@ const app = express();
 const { login, createUser } = require('./controllers/users');
 const { getClothingItems } = require('./controllers/clothingItems');
 const auth = require('./middlewares/auth');
+const { validateLogin, validateUserBody } = require('./middlewares/validation');
 
 const mainRouter = require("./routes/index");
 const errorHandler = require('./middlewares/err-handler');
@@ -22,6 +23,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/wtwr_db');
 
 app.use(cors());
 app.use(express.json());
+app.use(requestLogger);
 
 app.get('/crash-test', () => {
   setTimeout(() => {
@@ -29,12 +31,14 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signin', validateLogin, login);
+app.post('/signup', validateUserBody, createUser);
 app.get('/items', getClothingItems);
 
 app.use(auth);
 app.use("/", mainRouter);
+
+app.use(errorLogger);
 
 // celebrate error handler
 app.use(errors());
@@ -42,14 +46,7 @@ app.use(errors());
 // our centralized handler
 app.use(errorHandler);
 
+// eslint-disable-next-line no-console
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
 });
-
-app.use(requestLogger);
-app.use(routes);
-
-app.use(errorLogger);
-
-app.use(errors());
-app.use(errorHandler);

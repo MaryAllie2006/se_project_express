@@ -5,13 +5,14 @@ const {
   createClothingItem,
   deleteClothingItem
 } = require('../controllers/clothingItems');
+const { validateCardBody, validateItemId } = require('../middlewares/validation');
 
 const router = express.Router();
 
-router.post('/', createClothingItem);
-router.delete('/:itemId', deleteClothingItem);
+router.post('/', validateCardBody, createClothingItem);
+router.delete('/:itemId', validateItemId, deleteClothingItem);
 
-router.put('/:itemId/likes', likeItem);
-router.delete('/:itemId/likes', dislikeItem);
+router.put('/:itemId/likes', validateItemId, likeItem);
+router.delete('/:itemId/likes', validateItemId, dislikeItem);
 
 module.exports = router;

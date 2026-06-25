@@ -1,5 +1,7 @@
 const ClothingItem = require("../models/clothingItem");
-const { ERROR_CODE_404, ERROR_CODE_403, ERROR_CODE_500, ERROR_CODE_400 } = require("../utils/errors");
+const BadRequestError = require("../utils/BadRequestError");
+const ForbiddenError = require("../utils/ForbiddenError");
+const NotFoundError = require("../utils/NotFoundError");
 
 const createClothingItem = (req, res, next) => {
 const { name, weather, imageUrl } = req.body;
@@ -9,11 +11,9 @@ const owner = req.user._id;
     .then((item) => res.send(item))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        const error = new Error("Invalid data");
-        error.statusCode = ERROR_CODE_400;
-        return next(error);
+        return next(new BadRequestError("Invalid data"));
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -27,16 +27,12 @@ const likeItem = (req, res, next) => {
     .then((item) => res.send(item))
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        const error = new Error("Item not found");
-        error.statusCode = ERROR_CODE_404;
-        return next(error);
+        return next(new NotFoundError("Item not found"));
       }
       if (err.name === "CastError") {
-        const error = new Error("Invalid ID format");
-        error.statusCode = ERROR_CODE_400;
-        return next(error);
+        return next(new BadRequestError("Invalid ID format"));
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -50,16 +46,12 @@ const dislikeItem = (req, res, next) => {
     .then((item) => res.send(item))
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        const error = new Error("Item not found");
-        error.statusCode = ERROR_CODE_404;
-        return next(error);
+        return next(new NotFoundError("Item not found"));
       }
       if (err.name === "CastError") {
-        const error = new Error("Invalid ID format");
-        error.statusCode = ERROR_CODE_400;
-        return next(error);
+        return next(new BadRequestError("Invalid ID format"));
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -74,25 +66,19 @@ const getClothingItems = (req, res, next) => {
     .orFail()
     .then((item) => {
       if (!item.owner.equals(req.user._id)) {
-        const error = new Error("Forbidden action");
-        error.statusCode = ERROR_CODE_403;
-        return next(error);
+        return next(new ForbiddenError("Forbidden action"));
       }
       return ClothingItem.findByIdAndDelete(req.params.itemId)
         .then((deletedItem) => res.send(deletedItem));
     })
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        const error = new Error("Item not found");
-        error.statusCode = ERROR_CODE_404;
-        return next(error);
+        return next(new NotFoundError("Item not found"));
       }
       if (err.name === "CastError") {
-        const error = new Error("Invalid ID format");
-        error.statusCode = ERROR_CODE_400;
-        return next(error);
+        return next(new BadRequestError("Invalid ID format"));
       }
-      next(err);
+      return next(err);
     });
 };
 

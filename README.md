@@ -6,6 +6,10 @@ This project is the backend server for the WTWR (What to Wear?) application. It 
 
   [https://github.com/MaryAllie2006/se_project_react.git]
 
+## Backend Repository 
+
+[https://github.com/MaryAllie2006/se_project_express.git]
+
 ## Functionality
 
 - User registration and retrieval

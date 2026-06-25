@@ -1,7 +1,10 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require("../models/user");
-const {ERROR_CODE_400,ERROR_CODE_401, ERROR_CODE_404, ERROR_CODE_500, ERROR_CODE_409} = require("../utils/errors");
+const BadRequestError = require("../utils/BadRequestError");
+const UnauthorizedError = require("../utils/UnauthorizedError");
+const NotFoundError = require("../utils/NotFoundError");
+const ConflictError = require("../utils/ConflictError");
 const {JWT_SECRET} = require('../utils/config');
 
 const createUser = (req, res, next) => {
@@ -16,19 +19,15 @@ const createUser = (req, res, next) => {
     })
   .catch((err) => {
     if(err.code === 11000) {
-      const error = new Error("This email address is already registered.");
-      error.statusCode = ERROR_CODE_409;
-      return next(error);
-      }
+      return next(new ConflictError("This email address is already registered."));
+    }
 
-      if (err.name === "ValidationError") {
-        const error = new Error("Invalid data");
-        error.statusCode = ERROR_CODE_400;
-        return next(error);
-      }
+    if (err.name === "ValidationError") {
+      return next(new BadRequestError("Invalid data"));
+    }
 
-      next(err);
-    });
+    return next(err);
+  });
 
 };
 
@@ -39,16 +38,12 @@ const getCurrentUser = (req, res, next) => {
     .then((user) => res.status(201).send(user))
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        const error = new Error("User not found");
-        error.statusCode = ERROR_CODE_404;
-        return next(error);
+        return next(new NotFoundError("User not found"));
       }
       if (err.name === "CastError") {
-        const error = new Error("Invalid ID format");
-        error.statusCode = ERROR_CODE_400;
-        return next(error);
+        return next(new BadRequestError("Invalid ID format"));
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -56,9 +51,7 @@ const login = (req, res, next) => {
   const {email, password} = req.body;
 
   if(!email || !password) {
-    const error = new Error("Email and password are required");
-    error.statusCode = ERROR_CODE_400;
-    return next(error);
+    return next(new BadRequestError("Email and password are required"));
   }
 
   return User.findUserByCredentials(email, password)
@@ -68,11 +61,9 @@ const login = (req, res, next) => {
     })
     .catch((err) => {
       if (err.message === "Incorrect email or password") {
-        const error = new Error("Incorrect email or password.");
-        error.statusCode = ERROR_CODE_401;
-        return next(error);
+        return next(new UnauthorizedError("Incorrect email or password."));
       }
-      next(err);
+      return next(err);
     });
   };
 
@@ -87,34 +78,15 @@ const login = (req, res, next) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        const error = new Error("User not found");
-        error.statusCode = ERROR_CODE_404;
-        return next(error);
+        return next(new NotFoundError("User not found"));
       }
       if (err.name === "ValidationError") {
-        const error = new Error("Invalid data");
-        error.statusCode = ERROR_CODE_400;
-        return next(error);
+        return next(new BadRequestError("Invalid data"));
       }
       if (err.name === "CastError") {
-        const error = new Error("Invalid ID format");
-        error.statusCode = ERROR_CODE_400;
-        return next(error);
+        return next(new BadRequestError("Invalid ID format"));
       }
-      next(err);
+      return next(err);
     });
   }
 module.exports = { getCurrentUser, updateCurrentUser, createUser, login};
-
-const getUser = (req, res, next) => {
-  User.findById(req.params.id)
-    .orFail(() => {
-      const error = new Error('User ID not found');
-      error.statusCode = 404;
-      throw error;
-    })
-    .then((user) => res.send(user))
-    .catch((err) => {
-      next(err);
-    });
-};
